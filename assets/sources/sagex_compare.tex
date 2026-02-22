@@ -1,0 +1,55 @@
+\begin{table}[!t]
+\centering
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\caption{Comparison between \sys and SOTA ADKs in key features.
+\supportfull\ means full support; \supportpartial\ means partial or limited support;
+\supportnone\ means not supported.}
+% Resize the entire table to fit the page width, while keeping Category/Feature unwrapped.
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{} C C C C C C C C @{}}
+\Xhline{1.0pt}
+\textbf{Category} &
+\textbf{Feature} &
+\textbf{\sys} &
+\makecell{\textbf{Google}} &
+\makecell{\textbf{OpenAI}} &
+\makecell{\textbf{Claude}} &
+\makecell{\textbf{OpenHands}} &
+\textbf{LangChain} \\
+\midrule
+% -------- Sub-agents and topology -----
+\multirow{3}{*}{\textbf{Topology}} &
+AI-created topology &
+\supportfull & \supportnone & \supportnone & \supportnone & \supportnone & \supportnone \\
+& Agent management &
+\supportfull & \supportpartial & \supportpartial & \supportpartial & \supportpartial & \supportpartial \\
+& Agent ensemble &
+\supportfull & \supportnone & \supportnone & \supportnone & \supportnone & \supportnone \\
+\midrule
+
+% ---------------- Tool ----------------
+\multirow{2}{*}{\textbf{Tool}} &
+AI-written tools &
+\supportfull & \supportnone & \supportnone & \supportpartial & \supportnone & \supportnone \\
+& Tool management &
+\supportfull & \supportnone & \supportnone & \supportpartial  & \supportpartial & \supportnone \\
+\midrule
+
+
+% ---------------- Memory --------------
+\multirow{3}{*}{\textbf{Memory}} &
+AI-created memory &
+\supportfull & \supportnone & \supportnone & \supportnone & \supportnone & \supportnone \\
+& Graph-based structure &
+\supportfull & \supportnone & \supportnone & \supportnone & \supportnone & \supportnone \\
+& AI-driven management &
+\supportfull & \supportnone & \supportnone & \supportnone & \supportnone & \supportnone \\
+% & Context shorten &
+% \supportfull & \supportpartial & \supportnone & \supportnone & \supportfull \\
+\Xhline{1.0pt}
+\end{tabular}%
+}
+\label{tab:compare}
+\end{table}
+
