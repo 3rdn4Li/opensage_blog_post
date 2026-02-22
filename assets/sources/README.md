@@ -1,7 +1,9 @@
 # Asset sources
 
-This folder stores upstream figure/table sources that were used to create or
-transcribe assets in this repo.
+This folder stores upstream sources used to generate figures/tables in this
+repo.
 
-- `sagex_compare.tex`: upstream LaTeX table source (comparison table).
-
+- `opensage_arxiv_2602.16891.pdf`: arXiv PDF (used for reference only).
+- `cybergym_ablation_topology.pdf`: Topology ablation figure source.
+- `cybergym_ablation_tooling.pdf`: Tooling ablation figure source.
+- `sagex_compare.tex`: LaTeX source for the Table 1 comparison table.

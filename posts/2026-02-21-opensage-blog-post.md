@@ -42,7 +42,7 @@ This human-centered paradigm mirrors early machine learning, where models depend
 
 Motivated by this shift, we introduce **OpenSage (Open Self-programming Agent Generation Engine)**, an Agent Development Kit that allows AI systems to automatically create agent topologies, synthesize and manage tools, and control hierarchical memory for context storage and retrieval.
 
-As Table 1 shows, no existing ADK supports AI-created topologies, comprehensive tool management with heterogeneous execution environments, or AI-driven memory creation and management. OpenSage fills all these gaps.
+As Table 1 shows, existing ADKs stop short of AI-centered agent development, while OpenSage closes the gap across topology, tools, and memory.
 
 **Legend**: ● full support; ◐ partial/limited; ○ not supported.
 
@@ -69,39 +69,43 @@ OpenSage (Open Self-programming Agent Generation Engine) is the next-generation 
 - **Dynamic tool synthesis and management**  
 - **Hierarchical, graph-based memory with a memory agent**  
 
+<p align="center">
+  <img src="../assets/figures/figure2.png" alt="OpenSage Architecture" width="980" />
+</p>
+
+*Figure 1: Overview of the OpenSage framework. It enables AI to create different
+topologies while managing them in a unified agent pool; supports hierarchical
+tools with tool-specific sandboxing, state, and asynchronous execution; and provides
+graph-based short- and long-term memory with a memory agent.*
+
 Instead of manually wiring agent structures, tools, and memory, OpenSage provides a minimal but powerful scaffold that lets LLMs autonomously construct and adapt agent systems.
 
 ### 1. Self-Generating Agent Topology
 
-OpenSage enables agents to dynamically create, execute, and terminate sub-agents during task execution. This supports two common topologies:
+OpenSage enables agents to dynamically create, execute, and terminate sub-agents during task execution.
+All agents are managed in a unified sub-agent pool with tools for searching, listing, running, and resuming agents. Each sub-agent maintains its own short-term memory and has access to shared long-term memory; sub-agents can themselves create more sub-agents, enabling rich hierarchical structures. This mechanism enables various agent topologies based on different tasks, where two types are most commonly seen:
 
 - **Vertical topology**: Decomposing complex tasks into sequential sub-tasks handled by specialized sub-agents  
 - **Horizontal topology**: Multiple sub-agents simultaneously execute the same task using different plans, with results integrated through an agent ensemble  
-
-All agents are managed in a unified sub-agent pool with tools for searching, listing, running, and resuming agents. Each sub-agent maintains its own short-term memory and has access to shared long-term memory; sub-agents can themselves create more sub-agents, enabling rich hierarchical structures.
 
 ### 2. Dynamic Tool Synthesis
 
 OpenSage empowers AI to construct and manage its own tools:
 
 - **Tool creation**: Agents can write new tools (Python modules, Bash scripts, etc.) and register them into a hierarchical, file-system-based structure with metadata describing interfaces and dependencies  
-- **Tool management**: Container-based execution isolation supports heterogeneous tools with conflicting dependencies, while a shared workspace enables data sharing across containers  
-- **Asynchronous execution**: Long-running tools (e.g., compilation, static analysis) execute in the background while agents continue reasoning, with handles for polling status and retrieving results  
-- **Domain-specific toolkit**: Specialized tools for software engineering and security tasks, including CodeQL, Joern, AFL, libFuzzer, coverage tools, and debuggers like GDB and PDB  
+- **Tool management**: Tool-specific container-based execution isolation supports heterogeneous tools with conflicting dependencies, while a shared workspace enables data sharing across containers  
+- **Asynchronous execution**: Agents can decide to run selected tools in the background (especially long-running ones like compilation and static analysis) while continuing to reason and call other tools; the agent monitors execution status and retrieves results when ready
 
-This design lets agents not only call tools, but also inspect, extend, and specialize their toolsets over time.
+- **Domain-specific toolkit**: Built on the capabilities above (tool creation, management, and sandboxed async execution), OpenSage integrates a suite of software engineering and security tools (e.g., CodeQL, Joern, AFL/libFuzzer, coverage tooling, GDB/PDB). Without these capabilities, integrating and running such a heterogeneous tool suite reliably within one framework would be impractical.  
 
 ### 3. Hierarchical Memory
 
 OpenSage features a graph-based memory system with AI-driven management:
 
-- **Short-term memory**: Execution history is organized as a graph that captures agent runs, tool calls, and their relationships. Long outputs are summarized but linked to full raw responses, and older history can be compressed when context grows too large.  
-- **Long-term memory**: High-level, shareable knowledge is stored as a Neo4j graph of entities (functions, files, Q&A items, etc.) and typed relationships, with embeddings attached to node labels to support semantic retrieval.  
-- **Memory agent**: A dedicated agent mediates access to both short- and long-term memory. Other agents issue natural language requests, and the memory agent decides how to search, store, or update memory while avoiding redundancy.  
-
-![OpenSage Architecture](../assets/figures/figure2.png)  
-*Figure 2: OpenSage framework overview showing dynamic agent pool, hierarchical tools with sandboxing and async execution, and graph-based memory managed by a dedicated memory agent.*
-
+- **Short-term memory**: Execution history is stored as a graph in Neo4j, where each agent execution corresponds to an AgentRun node, and each sub-agent’s AgentRun is linked to its parent’s AgentRun, forming a hierarchical structure. Step-level tool calls and responses are stored as Event nodes, linking to their corresponding AgentRun nodes. Summarizations are linked to nodes that contain the corresponding unsummarized content. We provide graph-based retrieval tools that allow agents to inspect past executions, traverse related events, and recover unsummarized outputs as needed.
+ <!-- Long outputs are summarized but linked to full raw responses, and older history can be compressed when context grows too large while still maintaining links back to the original unsummarized content.   -->
+- **Long-term memory**: High-level, shareable knowledge is stored as a Neo4j graph of entities (functions, files, Q&A items, etc.) and typed relationships, with embeddings attached to node labels to support semantic retrieval. We expose tools that let agents retrieve, insert, and update graph nodes and edges.
+- **Memory agent**: A dedicated agent mediates access to both short- and long-term memory. Other agents issue natural language requests, Other agents issue natural language requests, and the memory agent interprets them and carries out the appropriate memory operations.
 ---
 
 ## Key Results
@@ -110,18 +114,25 @@ OpenSage features a graph-based memory system with AI-driven management:
 
 We evaluated OpenSage on three diverse benchmarks with various backbone models:
 
-- **CyberGym** (1,507 real-world C/C++ vulnerabilities): Tests agents’ ability to reproduce security vulnerabilities by crafting proof-of-concepts in containerized environments, stressing decomposition, specialized tooling, and complex reasoning.  
+- **CyberGym** (1,507 real-world C/C++ vulnerabilities): Tests agents’ ability to reproduce security vulnerabilities by crafting proof-of-concepts in containerized environments, emphasizing self-generating agent topology and specialized tooling.
 - **Terminal-Bench 2.0** (89 expert-curated tasks): Evaluates agents across diverse domains (SWE, scientific computing, ML) under realistic, resource-constrained terminal environments.  
 - **SWE-Bench Pro** (266 Python tasks): Assesses long-horizon software engineering tasks that require extensive context maintenance and retrieval.  
 
-![Benchmark Results](../assets/figures/result_main.png)  
-*Figure: SageAgent (via OpenSage) ranks first on CyberGym (60.2%) and Terminal-Bench 2.0 (65.2%), and substantially outperforms baselines on SWE-Bench Pro (59.0% vs. 40.2% for SWE-agent and 9.4% for Agentless).*
+<p align="center">
+  <img src="../assets/figures/result_main.png" alt="Benchmark Results" width="760" />
+</p>
+
+*Figure 2: Results across CyberGym, Terminal-Bench 2.0, and SWE-Bench Pro
+(Python).*
 
 Key findings:
 
-- On **CyberGym**, SageAgent with GPT-5 medium achieves **60.2%** resolved rate—over 20 percentage points higher than OpenHands using GPT-5 with higher reasoning effort.  
-- On **Terminal-Bench 2.0**, SageAgent with Gemini 3 Pro reaches **65.2%**, ranking first on the leaderboard and outperforming Ante and Codex CLI under the same backbone.  
-- On **SWE-Bench Pro (Python)**, SageAgent with Gemini 3 Flash achieves **59.0%**, far above SWE-agent (**40.2%**) and Agentless (**9.4%**).  
+- On **CyberGym**, SageAgent with GPT-5 medium achieves **60.2%** resolved rate, ranks first with the same model,outperforming OpenHands even when OpenHands uses GPT-5 with higher reasoning
+  effort.  
+- On **Terminal-Bench 2.0**, SageAgent reaches **65.2%** resolved rate, achieves the best result under the same backbone model (Gemini 3 Pro),
+- On **SWE-Bench Pro (Python)**, under the same backbone model (Gemini 3 Flash),
+  SageAgent achieves **59.0%**, far above SWE-agent (**40.2%**) and Agentless
+  (**9.4%**).  
 
 These results show that OpenSage-based agents (SageAgent) consistently outperform state-of-the-art agents and ADKs across heterogeneous, challenging benchmarks.
 
@@ -135,21 +146,26 @@ We conducted ablation studies on a 300-instance CyberGym subset to evaluate the 
 - **NoVertical**: Disables dynamic sub-agent creation (no vertical topology)  
 - **NoFeature**: Disables all OpenSage features (no topology, no advanced tooling)  
 
-![Topology Ablation](../assets/figures/figure3_left.png)  
-*Figure 3 (left): Removing either horizontal or vertical topology significantly degrades performance on CyberGym.*
+<p align="center">
+  <img src="../assets/figures/figure3.png" alt="Topology Ablation" width="560" />
+</p>
 
-**Results**: With all features enabled, the model actively creates specialized sub-agents (e.g., dedicated debugging agents) with tailored instructions and toolsets. Removing vertical topology causes substantial performance drops due to context overflow—average summarization events per task increase from 6.4 to 13.1, indicating significant information loss. Horizontal topology (agent ensemble) also adds value: across 27 tasks where it is triggered, the ensemble resolves 15 additional instances.
+*Figure 3: Agent topology ablation on a 300-instance CyberGym subset.*
 
-Comparing with **Agentless** on SWE-Bench Pro further validates self-generated structures: despite being implemented in 6,300 lines of expert-designed Python code, Agentless achieves only **9.4%** on Python tasks. OpenSage achieves **59.0%** with just 531 additional lines of task-specific code on top of the generic framework.
+Removing vertical topology leads to a substantial performance drop: without dynamic sub-agent creation, context frequently exceeds the window, triggering more summarization (the average number of summarization events per task increases from 6.4 to 13.1) and causing greater information loss. Horizontal topology via agent ensembles is also effective: on the 27 tasks where it is triggered, the ensemble resolves 15% more instances, indicating its effectiveness.
 
 ### Large–Small Model Collaboration
 
 OpenSage’s flexible topology also supports heterogeneous model setups. On Terminal-Bench 2.0, we evaluated a collaboration pattern where a strong model (Gemini 3 Pro) handles planning and review, while a smaller model (GPT-5 Mini) performs detailed execution:
 
-![Collaboration Results](../assets/figures/figure4.png)  
-*Figure 4: Large–small collaboration (Gemini 3 Pro + GPT-5 Mini) matches GPT-5’s performance while reducing cost compared to using Gemini 3 Pro alone.*
+<p align="center">
+  <img src="../assets/figures/figure5.png" alt="Collaboration Results" width="560" />
+</p>
 
-This setup substantially improves accuracy over GPT-5 Mini alone, matches GPT-5’s performance, and reduces cost relative to running Gemini 3 Pro end-to-end.
+*Figure 4: Terminal-Bench 2.0: collaboration variants (performance–cost
+trade-off).*
+
+This setup substantially improves accuracy over GPT-5 Mini alone, matches GPT-5’s performance, and reduces cost relative to running Gemini 3 Pro or GPT-5 end-to-end.
 
 ---
 
@@ -160,16 +176,17 @@ Ablating the tooling system on the same CyberGym subset highlights its critical 
 - **NoTools**: Replaces the entire tooling system with a raw terminal interface  
 - **NoFeature**: Disables both tooling and self-generating topology  
 
-![Tooling Ablation](../assets/figures/figure3_right.png)  
-*Figure 3 (right): Disabling OpenSage’s tooling system causes a substantial performance drop on CyberGym.*
+<p align="center">
+  <img src="../assets/figures/figure4.png" alt="Tooling Ablation" width="560" />
+</p>
 
-With the full tooling system, agents do not rely solely on initially provided general-purpose tools—they **create new tools at runtime**. On this 300-instance subset, agents created **39 task-specific tools** written in Python and C/C++, including:
+*Figure 5: Tooling system ablation on a 300-instance CyberGym subset.*
+
+With the full tooling system, agents do not rely solely on initially provided security specific tool set.They also **create new tools at runtime**. On this 300-instance subset, agents created **39 task-specific tools** written in Python and C/C++, including:
 
 - Grammar-aware fuzzers  
 - Seed generation and mutation utilities  
 - File-format-specific input generators  
-
-This demonstrates that OpenSage’s dynamic tool synthesis and management are actively exercised in practice and are essential for solving complex, real-world security tasks.
 
 ---
 
@@ -178,17 +195,22 @@ This demonstrates that OpenSage’s dynamic tool synthesis and management are ac
 We evaluated three memory configurations on SWE-Bench Pro:
 
 - **SageAgent**: Full hierarchical memory with memory agent (OpenSage design)  
-- **Mem0g**: Integrates Mem0g’s graph memory without AI-driven memory management  
+- **Mem0<sup>g</sup>**: Integrates Mem0<sup>g</sup>’s graph memory 
 - **NoMem**: No explicit external memory mechanism  
 
-![Memory Ablation](../assets/figures/figure5.png)
-*Figure 5: OpenSage’s hierarchical memory substantially outperforms both Mem0g and no-memory baselines on SWE-Bench Pro.*
+<p align="center">
+  <img src="../assets/figures/figure6.png" alt="Memory Ablation" width="560" />
+</p>
 
-OpenSage’s memory design achieves a **59.0%** resolved rate, compared to **56.4%** for Mem0g and **56.2%** for NoMem. The improvement comes from:
+*Figure 6: Memory system ablation on SWE-Bench Pro (Python).*
 
-- Task-tailored node and edge schemas for structured SWE knowledge  
+OpenSage’s memory design achieves a **59.0%** resolved rate, compared to
+**56.4%** for Mem0<sup>g</sup> and **56.2%** for NoMem. The improvement comes
+from:
+
 - AI-controlled decisions about what to persist and how to organize knowledge  
-- Combined embedding-based and pattern-based retrieval to surface the most relevant context  
+- Combined embedding-based and graph-based retrieval to surface the most relevant context  
+- Tailored node and edge types for coding tasks, while still allowing the agent to create new types and extend the schema.
 
 These results show that simply adding a graph memory is not enough; AI-centered memory management is key for long-horizon software engineering tasks.
 
@@ -199,10 +221,10 @@ These results show that simply adding a graph memory is not enough; AI-centered 
 Across experiments, we observe rich self-programming behaviors:
 
 - **Dynamic sub-agent creation**: Backbone models actively create sub-agents for distinct sub-tasks with synthesized system prompts and focused toolsets (e.g., dedicated debugging agents).  
-- **Autonomous tool writing**: Agents construct task-specific tools, including grammar-aware fuzzers and format-specific generators, instead of relying solely on general-purpose tools.  
+- **Autonomous tool writing**: Agents construct task-specific tools, including grammar-aware fuzzers and format-specific seed generators for fuzzers, instead of relying solely on general-purpose tools.  
 - **Intelligent memory usage**: The memory agent selectively persists high-signal information and leverages graph-based retrieval to avoid redundant queries and keep context focused.  
 
-At the same time, we see that current models do not always use these advanced features optimally: they sometimes create sub-agents with mismatched toolsets, hallucinate tools, or generate overly complex workflows. This highlights a capability gap: OpenSage’s AI-centered features are effective, but stronger models will be needed to fully exploit them.
+At the same time, we see that current models do not always use these advanced features optimally: in some cases, the invocation frequency of these capabilities remains low; models may forget to reuse existing agents or memory, create sub-agents with mismatched toolsets or hallucinate tools. This highlights a capability gap: OpenSage’s AI-centered features are effective, but stronger models will be needed to fully exploit them.
 
 ---
 
@@ -210,14 +232,12 @@ At the same time, we see that current models do not always use these advanced fe
 
 OpenSage represents a fundamental shift in how we build AI agents—from human-centered, hand-crafted pipelines to AI-centered, self-programming agent systems. By providing a minimal but expressive scaffold for topology, tools, and memory, OpenSage enables LLMs to autonomously explore and construct more capable agent architectures.
 
-Our results show that this paradigm yields substantial practical gains: SageAgent ranks first on CyberGym and Terminal-Bench 2.0 leaderboards and significantly outperforms existing approaches on SWE-Bench Pro. Rigorous ablation studies confirm that self-generated topology, dynamic tools, and hierarchical memory are all necessary to close the performance gap.
-
 Future directions include:
 
-- **AI-generated workflows**: Allowing agents to generate full multi-stage workflows with AI-decided dependencies and communication patterns  
+- **AI-generated workflows**: Allowing agents to generate full multi-stage workflows with AI-decided dependencies and communication patterns among different agents 
 - **Integrated training support**: Running large-scale rollouts on Kubernetes-backed sandboxes for RL-style post-training and finetuning  
 
-We believe OpenSage lays the groundwork for the next generation of self-evolving AI systems—just as modern machine learning moved beyond hand-crafted features, agent development is now ready to move beyond hand-crafted architectures.
+Our goal is for OpenSage to be not only an agent construction framework, but also a training scaffold for next-generation reasoning models. We see it as the foundation of an AI-centered paradigm, where AI can design, coordinate, and refine agents through interaction and feedback. Looking forward, we envision systems that can autonomously instantiate the right agents for a task and drive them to completion, unifying agent construction and problem solving within a single, AI-centered loop.
 
 ---
 
