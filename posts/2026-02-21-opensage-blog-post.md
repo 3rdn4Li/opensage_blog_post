@@ -236,8 +236,8 @@ OpenSage represents a fundamental shift in how we build AI agents—from human-c
 
 Future directions include:
 
-- **AI-generated workflows**: Allowing agents to generate full multi-stage workflows with AI-decided dependencies and communication patterns among different agents 
-- **Integrated training support**: Running large-scale rollouts on Kubernetes-backed sandboxes for RL-style post-training and finetuning  
+- **AI-generated workflows**: Allowing agents to generate full multi-stage workflows with AI-decided dependencies and communication patterns among different agents. 
+- **Integrated training support**: Running large-scale rollouts on Kubernetes-backed sandboxes for RL-style post-training and finetuning.  
 
 Our goal is for OpenSage to be not only an agent construction framework, but also a training scaffold for next-generation reasoning models. We see it as the foundation of an AI-centered paradigm, where AI can design, coordinate, and refine agents through interaction and feedback. Looking forward, we envision systems that can autonomously instantiate the right agents for a task and drive them to completion, unifying agent construction and problem solving within a single, AI-centered loop.
 
