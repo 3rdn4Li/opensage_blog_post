@@ -43,7 +43,7 @@ Motivated by this shift, we introduce **OpenSage (Open Self-programming Agent Ge
 
 As Table 1 shows, existing ADKs stop short of AI-centered agent development, while OpenSage closes the gap across topology, tools, and memory.
 
-**Legend**: ● full support; ◐ partial/limited; ○ not supported.
+*Table 1: OpenSage vs. state-of-the-art ADKs (● full support; ◐ partial/limited; ○ not supported).* 
 
 | Category | Feature | OpenSage | Google ADK | OpenAI ADK | Claude ADK | OpenHands | LangChain |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ As Table 1 shows, existing ADKs stop short of AI-centered agent development, whi
 | Memory | Graph-based structure | ● | ○ | ○ | ○ | ○ | ○ |
 | Memory | AI-driven management | ● | ○ | ○ | ○ | ○ | ○ |
 
-*Table 1: OpenSage vs. state-of-the-art ADKs.*
+
 
 ---
 
