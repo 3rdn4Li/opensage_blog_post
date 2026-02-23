@@ -122,7 +122,7 @@ We evaluated OpenSage on three diverse benchmarks with various backbone models:
 </p>
 
 *Figure 2: Results across CyberGym, Terminal-Bench 2.0, and SWE-Bench Pro
-(Python).*
+(Python). SageAgent denotes an agent built with OpenSage.*
 
 Key findings:
 
@@ -149,7 +149,8 @@ We conducted ablation studies on a 300-instance CyberGym subset to evaluate the 
   <img src="../assets/figures/figure3.png" alt="Topology Ablation" width="560" />
 </p>
 
-*Figure 3: Agent topology ablation on a 300-instance CyberGym subset.*
+*Figure 3: Agent topology ablation on a 300-instance CyberGym subset.
+SageAgent denotes an agent built with OpenSage.*
 
 Removing vertical topology leads to a substantial performance drop: without dynamic sub-agent creation, context frequently exceeds the window, triggering more summarization (the average number of summarization events per task increases from 6.4 to 13.1) and causing greater information loss. Horizontal topology via agent ensembles is also effective: on the 27 tasks where it is triggered, the ensemble resolves 15% more instances, indicating its effectiveness.
 
@@ -179,7 +180,8 @@ Ablating the tooling system on the same CyberGym subset highlights its critical 
   <img src="../assets/figures/figure4.png" alt="Tooling Ablation" width="560" />
 </p>
 
-*Figure 5: Tooling system ablation on a 300-instance CyberGym subset.*
+*Figure 5: Tooling system ablation on a 300-instance CyberGym subset.
+SageAgent denotes an agent built with OpenSage.*
 
 With the full tooling system, agents do not rely solely on initially provided security specific tool set.They also **create new tools at runtime**. On this 300-instance subset, agents created **39 task-specific tools** written in Python and C/C++, including:
 
@@ -201,7 +203,8 @@ We evaluated three memory configurations on SWE-Bench Pro:
   <img src="../assets/figures/figure6.png" alt="Memory Ablation" width="560" />
 </p>
 
-*Figure 6: Memory system ablation on SWE-Bench Pro (Python).*
+*Figure 6: Memory system ablation on SWE-Bench Pro (Python).
+SageAgent denotes an agent built with OpenSage.*
 
 OpenSage’s memory design achieves a **59.0%** resolved rate, compared to
 **56.4%** for Mem0<sup>g</sup> and **56.2%** for NoMem. The improvement comes
