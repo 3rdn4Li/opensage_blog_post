@@ -4,22 +4,21 @@ title: "OpenSage: Self‑programming Agent Generation Engine"
 ---
 # OpenSage: Self‑Programming Agent Generation Engine
 
-[*Hongwei Li*](mailto:hongwei@ucsb.edu)<sup>1,*</sup>,
-[*Zhun Wang*](mailto:zhun.wang@berkeley.edu)<sup>2,*</sup>,
-Qinrun Dai<sup>3</sup>, Yuzhou Nie<sup>1</sup>, Jinjun Peng<sup>4</sup>, Ruitong
-Liu<sup>3</sup>, Jingyang Zhang<sup>6</sup>, Kaijie Zhu<sup>1</sup>, Jingxuan
-He<sup>2</sup>, Lun Wang<sup>7</sup>, Yangruibo Ding<sup>5</sup>, Yueqi
-Chen<sup>3</sup>, Wenbo Guo<sup>1</sup>, Dawn Song<sup>2</sup>
-
-<sup>1</sup>UC Santa Barbara; <sup>2</sup>UC Berkeley; <sup>3</sup>University of
-Colorado Boulder; <sup>4</sup>Columbia University; <sup>5</sup>UCLA;
-<sup>6</sup>Duke University; <sup>7</sup>Google DeepMind
-
-<sup>*</sup>Fully equal contribution.
-
+<div class="author-info">
+<strong>
+  <a href="mailto:hongwei@ucsb.edu">Hongwei Li*</a>,
+  <a href="mailto:zhun.wang@berkeley.edu">Zhun Wang*</a>,
+  Qinrun Dai, Yuzhou Nie, Jinjun Peng, Ruitong Liu, Jingyang Zhang, Kaijie Zhu,
+  Jingxuan He, Lun Wang, Yangruibo Ding, Yueqi Chen, Wenbo Guo, Dawn Song
+</strong>
+<br>
+UC Santa Barbara, UC Berkeley, University of Colorado Boulder, Columbia
+University, Duke University, Google DeepMind, UCLA (* for equal contribution)
+<br>
 February 18, 2026
-
-(Est. 5-7 minutes read, preprint available at [arXiv](https://arxiv.org/))
+<br>
+<em>(Est. 5-7 minutes read, preprint available at <a href="https://arxiv.org/abs/2602.16891" target="_blank">arXiv</a>)</em>
+</div>
 
 
 ---
